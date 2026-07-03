@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Indoor Cricket Scorer</string>
+
+    <string name="home_title">Indoor Cricket Scorer</string>
+    <string name="home_subtitle">Welcome back. Start a new indoor cricket match or review your scoring data.</string>
+
+    <string name="new_match">New Match</string>
+    <string name="new_match_subtitle">Create and begin scoring a fresh match.</string>
+
+    <string name="match_history">Match History</string>
+    <string name="match_history_subtitle">Review previously scored indoor cricket matches.</string>
+
+    <string name="statistics">Statistics</string>
+    <string name="statistics_subtitle">View team and player performance summaries.</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_subtitle">Configure app preferences and scoring behavior.</string>
+
+    <string name="placeholder_screen_message">This screen is ready for future implementation.</string>
+</resources>
