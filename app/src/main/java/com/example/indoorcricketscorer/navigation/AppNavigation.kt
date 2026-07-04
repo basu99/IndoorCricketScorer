@@ -13,6 +13,13 @@ import com.example.indoorcricketscorer.ui.screens.LiveScoreScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.indoorcricketscorer.viewmodel.ScoreViewModel
 import com.example.indoorcricketscorer.ui.screens.ScorecardScreen
+import com.example.indoorcricketscorer.viewmodel.ScoreViewModelFactory
+import com.example.indoorcricketscorer.ui.screens.MatchDetailsScreen
+import com.example.indoorcricketscorer.repository.MatchRepository
+import com.example.indoorcricketscorer.repository.PlayerRepository
+import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
+import com.example.indoorcricketscorer.viewmodel.PlayerViewModelFactory
+
 object AppDestinations {
     const val HOME = "home"
     const val MATCH_HISTORY = "match_history"
@@ -21,13 +28,47 @@ object AppDestinations {
     const val NEW_MATCH = "new_match"
     const val LIVE_SCORE = "live_score"
 
+    const val MATCH_DETAILS = "match_details/{matchId}"
+
+    fun matchDetailsRoute(matchId: Long): String {
+
+        return "match_details/$matchId"
+
+    }
+
     const val SCORECARD = "scorecard"
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+
+    matchRepository: MatchRepository,
+
+    playerRepository: PlayerRepository
+
+) {
     val navController = rememberNavController()
-    val scoreViewModel: ScoreViewModel = viewModel()
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    val database = com.example.indoorcricketscorer.data.database.AppDatabase.getInstance(context)
+
+    val repository = com.example.indoorcricketscorer.repository.MatchRepository(
+        database.matchDao()
+    )
+
+    val factory = ScoreViewModelFactory(repository)
+
+    val scoreViewModel: ScoreViewModel = viewModel(
+
+        factory = ScoreViewModelFactory(matchRepository)
+
+    )
+
+    val playerViewModel: PlayerViewModel = viewModel(
+
+        factory = PlayerViewModelFactory(playerRepository)
+
+    )
 
     NavHost(
         navController = navController,
@@ -54,7 +95,19 @@ fun AppNavigation() {
         }
         composable(AppDestinations.MATCH_HISTORY) {
             MatchHistoryScreen(
-                vm = scoreViewModel
+
+                vm = scoreViewModel,
+
+                onMatchClick = { id ->
+
+                    navController.navigate(
+
+                        AppDestinations.matchDetailsRoute(id)
+
+                    )
+
+                }
+
             )
         }
         composable(AppDestinations.STATISTICS) {
@@ -65,7 +118,10 @@ fun AppNavigation() {
         }
         composable(AppDestinations.NEW_MATCH) {
             NewMatchScreen(
+
                 vm = scoreViewModel,
+
+                playerVm = playerViewModel,
                 onStartMatch = {
                     navController.navigate(AppDestinations.LIVE_SCORE)
                 }
@@ -87,6 +143,36 @@ fun AppNavigation() {
                     navController.navigate(AppDestinations.SCORECARD)
                 }
             )
+        }
+
+        composable(
+
+            route = AppDestinations.MATCH_DETAILS
+
+        ) { backStackEntry ->
+
+            val id =
+
+                backStackEntry.arguments
+                    ?.getString("matchId")
+                    ?.toLongOrNull()
+
+            if (id != null) {
+
+                scoreViewModel.loadMatch(id)
+
+                scoreViewModel.selectedMatch?.let {
+
+                    MatchDetailsScreen(
+
+                        match = it
+
+                    )
+
+                }
+
+            }
+
         }
 
         composable(AppDestinations.SCORECARD) {

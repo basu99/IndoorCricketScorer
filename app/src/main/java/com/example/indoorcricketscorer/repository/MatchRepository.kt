@@ -11,6 +11,16 @@ class MatchRepository(
     fun getAllMatches(): Flow<List<MatchEntity>> =
         matchDao.getAllMatches()
 
+    suspend fun getMatchById(
+
+        id: Long
+
+    ): MatchEntity? {
+
+        return matchDao.getMatchById(id)
+
+    }
+
     suspend fun insertMatch(
 
         teamA: String,
@@ -54,6 +64,22 @@ class MatchRepository(
             )
 
         )
+
+    }
+
+    suspend fun deleteMatch(
+
+        id: Long
+
+    ) {
+
+        matchDao.deleteMatch(id)
+
+    }
+
+    suspend fun deleteAllMatches() {
+
+        matchDao.deleteAllMatches()
 
     }
 

@@ -6,15 +6,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.indoorcricketscorer.data.dao.MatchDao
 import com.example.indoorcricketscorer.data.entity.MatchEntity
-
+import com.example.indoorcricketscorer.data.entity.PlayerEntity
+import com.example.indoorcricketscorer.data.dao.PlayerDao
 @Database(
-    entities = [MatchEntity::class],
-    version = 2,
+    entities = [
+
+        MatchEntity::class,
+
+        PlayerEntity::class
+
+    ],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun matchDao(): MatchDao
+
+    abstract fun playerDao(): PlayerDao
 
     companion object {
         @Volatile
@@ -26,7 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "indoor_cricket_scorer_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

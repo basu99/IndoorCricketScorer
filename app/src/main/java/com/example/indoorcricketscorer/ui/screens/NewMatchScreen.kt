@@ -19,12 +19,17 @@ import com.example.indoorcricketscorer.viewmodel.ScoreViewModel
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.example.indoorcricketscorer.ui.components.TeamPlayerSection
-import com.example.indoorcricketscorer.data.PlayerRepository
+import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
 
 @Composable
 fun NewMatchScreen(
+
     vm: ScoreViewModel,
+
+    playerVm: PlayerViewModel,
+
     onStartMatch: () -> Unit
+
 ) {
 
     var teamA by remember { mutableStateOf("") }
@@ -231,9 +236,17 @@ fun NewMatchScreen(
 
                 onClick = {
 
-                    PlayerRepository.addPlayers(teamAPlayers)
+                    teamAPlayers.forEach {
 
-                    PlayerRepository.addPlayers(teamBPlayers)
+                        playerVm.savePlayer(it)
+
+                    }
+
+                    teamBPlayers.forEach {
+
+                        playerVm.savePlayer(it)
+
+                    }
 
                     vm.createMatch(
 

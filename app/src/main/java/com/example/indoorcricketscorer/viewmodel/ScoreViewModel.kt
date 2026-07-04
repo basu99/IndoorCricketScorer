@@ -7,8 +7,14 @@ import androidx.lifecycle.ViewModel
 import com.example.indoorcricketscorer.state.MatchState
 import com.example.indoorcricketscorer.state.Player
 import androidx.compose.runtime.mutableStateListOf
+import com.example.indoorcricketscorer.repository.MatchRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import com.example.indoorcricketscorer.data.entity.MatchEntity
 
-class ScoreViewModel : ViewModel() {
+class ScoreViewModel(
+    private val repository: MatchRepository
+) : ViewModel() {
 
     val isInningsFinished: Boolean
         get() =
@@ -36,7 +42,41 @@ class ScoreViewModel : ViewModel() {
 
                 state.teamA
 
+
         }
+
+    private fun saveMatchIfFinished() {
+
+        if (!isMatchFinished || matchSaved) return
+
+        viewModelScope.launch {
+
+            repository.insertMatch(
+
+                teamA = state.teamA,
+
+                teamB = state.teamB,
+
+                teamAScore = state.firstInningsScore,
+
+                teamAWickets = 0,
+
+                teamBScore = state.runs,
+
+                teamBWickets = state.wickets,
+
+                overs = state.totalOvers,
+
+                winner = winner
+
+            )
+
+            matchSaved = true
+        }
+
+
+    }
+
 
 
 
@@ -67,8 +107,13 @@ class ScoreViewModel : ViewModel() {
 
     var dismissedBatterIndex by mutableStateOf(-1)
         private set
+    private var matchSaved = false
+
+    var selectedMatch by mutableStateOf<MatchEntity?>(null)
+        private set
 
     private val history = mutableListOf<MatchState>()
+
     val battingTeamPlayers: List<Player>
         get() =
             if (state.innings == 1)
@@ -76,10 +121,7 @@ class ScoreViewModel : ViewModel() {
             else
                 state.teamBPlayers
 
-    private val completedMatches = mutableStateListOf<MatchState>()
-
-    val matchHistory: List<MatchState>
-        get() = completedMatches
+    val matchHistory = repository.getAllMatches()
 
     val bowlingTeamPlayers: List<Player>
         get() =
@@ -146,7 +188,11 @@ class ScoreViewModel : ViewModel() {
 
         teamBPlayerNames: List<String>
 
+
+
+
     ) {
+
 
         val teamAPlayers = teamAPlayerNames.map {
 
@@ -183,8 +229,10 @@ class ScoreViewModel : ViewModel() {
 
             currentOverBalls = 0
 
-        )
 
+
+        )
+        matchSaved = false
         history.clear()
     }
 
@@ -279,7 +327,8 @@ class ScoreViewModel : ViewModel() {
 
         ) {
 
-            completedMatches.add(state)
+
+            saveMatchIfFinished()      // <-- ADD THIS
 
         }
 
@@ -295,7 +344,8 @@ class ScoreViewModel : ViewModel() {
                 currentOverBalls = 0
             )
 
-            completedMatches.add(state)
+
+            saveMatchIfFinished()
 
             history.clear()
 
@@ -376,6 +426,8 @@ class ScoreViewModel : ViewModel() {
                     balls = state.totalOvers * 6
                 )
 
+                saveMatchIfFinished()
+
             }
 
         }
@@ -404,6 +456,8 @@ class ScoreViewModel : ViewModel() {
         waitingForNextBatter = false
 
         dismissedBatterIndex = -1
+
+        matchSaved = false
 
     }
 
@@ -441,6 +495,7 @@ class ScoreViewModel : ViewModel() {
         )
         waitingForNextBatter = false
         dismissedBatterIndex = -1
+        matchSaved = false
     }
 
     private fun updateBattingPlayers(
@@ -511,6 +566,30 @@ class ScoreViewModel : ViewModel() {
 
     }
 
+    fun deleteMatch(
+
+        id: Long
+
+    ) {
+
+        viewModelScope.launch {
+
+            repository.deleteMatch(id)
+
+        }
+
+    }
+
+    fun deleteAllMatches() {
+
+        viewModelScope.launch {
+
+            repository.deleteAllMatches()
+
+        }
+
+    }
+
     private fun swapStrike() {
 
         state = state.copy(
@@ -520,6 +599,20 @@ class ScoreViewModel : ViewModel() {
             nonStrikerIndex = state.strikerIndex
 
         )
+
+    }
+
+    fun loadMatch(
+
+        id: Long
+
+    ) {
+
+        viewModelScope.launch {
+
+            selectedMatch = repository.getMatchById(id)
+
+        }
 
     }
 
@@ -545,5 +638,7 @@ class ScoreViewModel : ViewModel() {
 
 
     }
+
+
 }
 

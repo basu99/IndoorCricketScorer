@@ -1,5 +1,6 @@
 package com.example.indoorcricketscorer.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,56 +8,135 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.indoorcricketscorer.viewmodel.ScoreViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Button
 
 @Composable
 fun MatchHistoryScreen(
 
-    vm: ScoreViewModel
+    vm: ScoreViewModel,
+
+    onMatchClick: (Long) -> Unit
 
 ) {
 
-    LazyColumn(
+    val matches by vm.matchHistory.collectAsState(initial = emptyList())
 
-        modifier = Modifier.fillMaxSize(),
+    Button(
 
-        contentPadding = PaddingValues(16.dp),
+        onClick = {
 
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            vm.deleteAllMatches()
+
+        },
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
 
     ) {
 
-        items(vm.matchHistory) { match ->
+        Text("Delete All History")
 
-            Card {
+    }
 
-                Column(
+    Spacer(Modifier.height(8.dp))
 
-                    modifier = Modifier.padding(16.dp)
+    if (matches.isEmpty()) {
+
+        Box(
+
+            modifier = Modifier.fillMaxSize(),
+
+            contentAlignment = Alignment.Center
+
+        ) {
+
+            Text(
+
+                "No matches played yet."
+
+            )
+
+        }
+
+    } else {
+
+        LazyColumn(
+
+            modifier = Modifier.fillMaxSize(),
+
+            contentPadding = PaddingValues(16.dp),
+
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+
+        ) {
+
+            items(matches) { match ->
+
+                Card(
+
+                    modifier = Modifier.clickable {
+
+                        onMatchClick(match.id)
+
+                    }
 
                 ) {
 
-                    Text(
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
 
-                        "${match.teamA} vs ${match.teamB}",
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
 
-                        style = MaterialTheme.typography.titleMedium
+                            Text(
+                                "${match.teamA} vs ${match.teamB}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
 
-                    )
+                            IconButton(
+                                onClick = {
 
-                    Text(
+                                    vm.deleteMatch(match.id)
 
-                        "Score : ${match.runs}/${match.wickets}"
+                                }
+                            ) {
 
-                    )
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete Match"
+                                )
 
-                    Text(
+                            }
 
-                        "Overs : ${match.totalOvers}"
+                        }
 
-                    )
+                        Spacer(Modifier.height(8.dp))
+
+                        Text(
+                            "${match.teamAScore}/${match.teamAWickets} vs ${match.teamBScore}/${match.teamBWickets}"
+                        )
+
+                        Text(
+                            "Winner: ${match.winner}"
+                        )
+
+                    }
 
                 }
 

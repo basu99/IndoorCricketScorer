@@ -12,6 +12,15 @@ interface MatchDao {
     @Query("SELECT * FROM matches ORDER BY id ASC")
     fun getAllMatches(): Flow<List<MatchEntity>>
 
+    @Query("SELECT * FROM matches WHERE id = :id")
+    suspend fun getMatchById(id: Long): MatchEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMatch(match: MatchEntity): Long
+
+    @Query("DELETE FROM matches WHERE id = :id")
+    suspend fun deleteMatch(id: Long)
+
+    @Query("DELETE FROM matches")
+    suspend fun deleteAllMatches()
 }
