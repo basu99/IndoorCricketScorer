@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
 import com.example.indoorcricketscorer.data.entity.PlayerEntity
+import androidx.compose.foundation.layout.heightIn
 
 @Composable
 fun PlayerSuggestionDropdown(
@@ -28,7 +29,11 @@ fun PlayerSuggestionDropdown(
         modifier = Modifier.fillMaxWidth()
     ) {
 
-        LazyColumn {
+        LazyColumn(
+
+            modifier = Modifier.heightIn(max = 220.dp)
+
+        ) {
 
             items(players) { player ->
 

@@ -24,15 +24,25 @@ class PlayerRepository(
 
     suspend fun insertPlayer(name: String) {
 
-        playerDao.insertPlayer(
+        val trimmed = name.trim()
 
-            PlayerEntity(
+        if (trimmed.isBlank()) return
 
-                name = name.trim()
+        val existing = playerDao.getPlayerByName(trimmed)
+
+        if (existing == null) {
+
+            playerDao.insertPlayer(
+
+                PlayerEntity(
+
+                    name = trimmed
+
+                )
 
             )
 
-        )
+        }
 
     }
 

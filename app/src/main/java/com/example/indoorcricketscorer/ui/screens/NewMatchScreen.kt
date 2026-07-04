@@ -23,6 +23,7 @@ import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
 import com.example.indoorcricketscorer.ui.components.PlayerSuggestionDropdown
 import androidx.compose.runtime.collectAsState
 
+
 @Composable
 fun NewMatchScreen(
 

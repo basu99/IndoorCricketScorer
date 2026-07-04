@@ -22,4 +22,11 @@ interface PlayerDao {
     @Query("DELETE FROM players")
     suspend fun deleteAllPlayers()
 
+    @Query(
+        "SELECT * FROM players WHERE LOWER(name) = LOWER(:name) LIMIT 1"
+    )
+    suspend fun getPlayerByName(
+        name: String
+    ): PlayerEntity?
+
 }

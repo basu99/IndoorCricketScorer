@@ -9,12 +9,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Job
 
 class PlayerViewModel(
 
-    private val repository: PlayerRepository
+    private val repository: PlayerRepository,
+
+    private var searchJob: Job? = null
 
 ) : ViewModel() {
+
 
     private val _suggestions =
         MutableStateFlow<List<PlayerEntity>>(emptyList())
@@ -24,13 +28,25 @@ class PlayerViewModel(
 
     fun search(query: String) {
 
-        viewModelScope.launch {
+        searchJob?.cancel()
 
-            repository.searchPlayers(query).collect {
+        if (query.isBlank()) {
 
-                _suggestions.value = it
+            _suggestions.value = emptyList()
 
-            }
+            return
+
+        }
+
+        searchJob = viewModelScope.launch {
+
+            repository
+                .searchPlayers(query)
+                .collect {
+
+                    _suggestions.value = it
+
+                }
 
         }
 
