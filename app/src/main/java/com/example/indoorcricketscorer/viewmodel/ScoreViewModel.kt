@@ -447,6 +447,24 @@ class ScoreViewModel(
         }
     }
 
+    fun setOpeningBatters(
+
+        strikerIndex: Int,
+
+        nonStrikerIndex: Int
+
+    ) {
+
+        state = state.copy(
+
+            strikerIndex = strikerIndex,
+
+            nonStrikerIndex = nonStrikerIndex
+
+        )
+
+    }
+
     fun resetMatch() {
 
         state = MatchState()

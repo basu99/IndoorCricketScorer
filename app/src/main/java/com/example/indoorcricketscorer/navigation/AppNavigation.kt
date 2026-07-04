@@ -18,6 +18,7 @@ import com.example.indoorcricketscorer.ui.screens.MatchDetailsScreen
 import com.example.indoorcricketscorer.ui.screens.MatchSummaryScreen
 import com.example.indoorcricketscorer.repository.MatchRepository
 import com.example.indoorcricketscorer.repository.PlayerRepository
+import com.example.indoorcricketscorer.ui.screens.BattingOrderScreen
 import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
 import com.example.indoorcricketscorer.viewmodel.PlayerViewModelFactory
 
@@ -40,6 +41,8 @@ object AppDestinations {
     const val SCORECARD = "scorecard"
 
     const val MATCH_SUMMARY = "match_summary"
+
+    const val BATTING_ORDER = "batting_order"
 }
 
 @Composable
@@ -117,7 +120,7 @@ fun AppNavigation(
 
                 playerVm = playerViewModel,
                 onStartMatch = {
-                    navController.navigate(AppDestinations.LIVE_SCORE)
+                    navController.navigate(AppDestinations.BATTING_ORDER)
                 }
             )
         }
@@ -210,6 +213,22 @@ fun AppNavigation(
                 onScorecard = {
 
                     navController.navigate(AppDestinations.SCORECARD)
+
+                }
+
+            )
+
+        }
+
+        composable(AppDestinations.BATTING_ORDER) {
+
+            BattingOrderScreen(
+
+                vm = scoreViewModel,
+
+                onContinue = {
+
+                    navController.navigate(AppDestinations.LIVE_SCORE)
 
                 }
 
