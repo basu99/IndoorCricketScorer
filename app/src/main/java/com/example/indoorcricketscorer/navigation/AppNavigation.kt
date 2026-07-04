@@ -15,6 +15,7 @@ import com.example.indoorcricketscorer.viewmodel.ScoreViewModel
 import com.example.indoorcricketscorer.ui.screens.ScorecardScreen
 import com.example.indoorcricketscorer.viewmodel.ScoreViewModelFactory
 import com.example.indoorcricketscorer.ui.screens.MatchDetailsScreen
+import com.example.indoorcricketscorer.ui.screens.MatchSummaryScreen
 import com.example.indoorcricketscorer.repository.MatchRepository
 import com.example.indoorcricketscorer.repository.PlayerRepository
 import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
@@ -37,6 +38,8 @@ object AppDestinations {
     }
 
     const val SCORECARD = "scorecard"
+
+    const val MATCH_SUMMARY = "match_summary"
 }
 
 @Composable
@@ -48,15 +51,6 @@ fun AppNavigation(
 
 ) {
     val navController = rememberNavController()
-    val context = androidx.compose.ui.platform.LocalContext.current
-
-    val database = com.example.indoorcricketscorer.data.database.AppDatabase.getInstance(context)
-
-    val repository = com.example.indoorcricketscorer.repository.MatchRepository(
-        database.matchDao()
-    )
-
-    val factory = ScoreViewModelFactory(repository)
 
     val scoreViewModel: ScoreViewModel = viewModel(
 
@@ -179,6 +173,34 @@ fun AppNavigation(
 
             ScorecardScreen(
                 vm = scoreViewModel
+            )
+
+        }
+
+        composable(AppDestinations.MATCH_SUMMARY) {
+
+            MatchSummaryScreen(
+
+                vm = scoreViewModel,
+
+                onHome = {
+
+                    navController.navigate(AppDestinations.HOME)
+
+                },
+
+                onNewMatch = {
+
+                    navController.navigate(AppDestinations.NEW_MATCH)
+
+                },
+
+                onScorecard = {
+
+                    navController.navigate(AppDestinations.SCORECARD)
+
+                }
+
             )
 
         }
