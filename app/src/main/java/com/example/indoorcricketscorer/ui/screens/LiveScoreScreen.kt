@@ -37,6 +37,25 @@ fun LiveScoreScreen(
 
 
     val state = vm.state
+
+    var showResetDialog by remember {
+
+        mutableStateOf(false)
+
+    }
+
+    var showHomeDialog by remember {
+
+        mutableStateOf(false)
+
+    }
+
+    var showNewMatchDialog by remember {
+
+        mutableStateOf(false)
+
+    }
+
     LaunchedEffect(vm.isMatchFinished) {
 
         if (vm.isMatchFinished) {
@@ -291,23 +310,17 @@ fun LiveScoreScreen(
 
                 },
 
-                onScorecard = {
-
-                    onScorecard()
-
-                },
+                onScorecard = onScorecard,
 
                 onHome = {
 
-                    onHome()
+                    showHomeDialog = true
 
                 },
 
                 onNewMatch = {
 
-                    vm.resetMatch()
-
-                    onNewMatch()
+                    showNewMatchDialog = true
 
                 }
 
@@ -388,7 +401,7 @@ fun LiveScoreScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
 
-                    vm.resetMatch()
+                    showResetDialog = true
 
                 }
             ) {
@@ -449,7 +462,206 @@ fun LiveScoreScreen(
 
             confirmButton = {}
 
+
+
+        )
+
+
+    }
+    if (showResetDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+                showResetDialog = false
+
+            },
+
+            title = {
+
+                Text("Reset Match")
+
+            },
+
+            text = {
+
+                Text(
+
+                    "Are you sure you want to reset this match? All current progress will be lost."
+
+                )
+
+            },
+
+            confirmButton = {
+
+                Button(
+
+                    onClick = {
+
+                        vm.resetMatch()
+
+                        showResetDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Yes")
+
+                }
+
+            },
+
+            dismissButton = {
+
+                Button(
+
+                    onClick = {
+
+                        showResetDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Cancel")
+
+                }
+
+            }
+
         )
 
     }
+    if (showHomeDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+                showHomeDialog = false
+
+            },
+
+            title = {
+
+                Text("Leave Match")
+
+            },
+
+            text = {
+
+                Text("Leave this match and return to Home?")
+
+            },
+
+            confirmButton = {
+
+                Button(
+
+                    onClick = {
+
+                        showHomeDialog = false
+
+                        onHome()
+
+                    }
+
+                ) {
+
+                    Text("Yes")
+
+                }
+
+            },
+
+            dismissButton = {
+
+                Button(
+
+                    onClick = {
+
+                        showHomeDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Cancel")
+
+                }
+
+            }
+
+        )
+
+    }
+    if (showNewMatchDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+                showNewMatchDialog = false
+
+            },
+
+            title = {
+
+                Text("Start New Match")
+
+            },
+
+            text = {
+
+                Text("Current match progress will be lost. Continue?")
+
+            },
+
+            confirmButton = {
+
+                Button(
+
+                    onClick = {
+
+                        vm.resetMatch()
+
+                        showNewMatchDialog = false
+
+                        onNewMatch()
+
+                    }
+
+                ) {
+
+                    Text("Yes")
+
+                }
+
+            },
+
+            dismissButton = {
+
+                Button(
+
+                    onClick = {
+
+                        showNewMatchDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Cancel")
+
+                }
+
+            }
+
+        )
+
+    }
+
 }
