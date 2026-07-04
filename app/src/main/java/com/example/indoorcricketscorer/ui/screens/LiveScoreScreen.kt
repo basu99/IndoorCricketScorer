@@ -23,6 +23,8 @@ import com.example.indoorcricketscorer.ui.components.BowlerCard
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
+import com.example.indoorcricketscorer.ui.components.ScoringKeypad
+import com.example.indoorcricketscorer.ui.components.MatchActionBar
 
 @Composable
 fun LiveScoreScreen(
@@ -281,18 +283,27 @@ fun LiveScoreScreen(
 
             }
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onHome
-            ) {
+            MatchActionBar(
 
-                Text("Home")
+                onUndo = {
 
-            }
+                    vm.undo()
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
+                },
+
+                onScorecard = {
+
+                    onScorecard()
+
+                },
+
+                onHome = {
+
+                    onHome()
+
+                },
+
+                onNewMatch = {
 
                     vm.resetMatch()
 
@@ -300,89 +311,65 @@ fun LiveScoreScreen(
 
                 }
 
-            ) {
-
-                Text("New Match")
-
-            }
+            )
 
 
-            Button(
+            ScoringKeypad(
+
                 enabled =
                     !vm.isMatchFinished &&
                             !vm.isInningsFinished &&
                             !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(0) }
-            ) {
-                Text("Dot Ball")
-            }
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(1) }
-            ) {
-                Text("1 Run")
-            }
+                onDot = {
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(2) }
-            ) {
-                Text("2 Runs")
-            }
+                    vm.addRuns(0)
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(3) }
-            ) {
-                Text("3 Runs")
-            }
+                },
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(4) }
-            ) {
-                Text("4 Runs")
-            }
+                onOne = {
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(5) }
-            ) {
-                Text("5 Runs")
-            }
+                    vm.addRuns(1)
 
-            Button(
-                enabled =
-                    !vm.isMatchFinished &&
-                            !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { vm.addRuns(6) }
-            ) {
-                Text("6 Runs")
-            }
+                },
+
+                onTwo = {
+
+                    vm.addRuns(2)
+
+                },
+
+                onThree = {
+
+                    vm.addRuns(3)
+
+                },
+
+                onFour = {
+
+                    vm.addRuns(4)
+
+                },
+
+                onFive = {
+
+                    vm.addRuns(5)
+
+                },
+
+                onSix = {
+
+                    vm.addRuns(6)
+
+                },
+
+                onWicket = {
+
+                    vm.wicket()
+
+                }
+
+            )
 
             Button(
                 enabled =
@@ -395,21 +382,7 @@ fun LiveScoreScreen(
                 Text("Wicket")
             }
 
-            Button(
-                enabled = !vm.isMatchFinished,
-                onClick = { vm.undo() }
-            ) {
-                Text("Undo")
-            }
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onScorecard
-            ) {
-
-                Text("Scorecard")
-
-            }
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
