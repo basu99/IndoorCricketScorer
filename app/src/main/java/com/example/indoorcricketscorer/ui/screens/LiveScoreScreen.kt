@@ -29,11 +29,21 @@ fun LiveScoreScreen(
     vm: ScoreViewModel,
     onHome: () -> Unit,
     onNewMatch: () -> Unit,
-    onScorecard: () -> Unit
+    onScorecard: () -> Unit,
+    onMatchFinished: () -> Unit
 ) {
 
 
     val state = vm.state
+    LaunchedEffect(vm.isMatchFinished) {
+
+        if (vm.isMatchFinished) {
+
+            onMatchFinished()
+
+        }
+
+    }
     val battingPlayers = vm.battingTeamPlayers
     val currentRunRate =
         if (state.balls == 0)
@@ -70,31 +80,7 @@ fun LiveScoreScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {Surface(
-            modifier = Modifier.fillMaxWidth(),
-            tonalElevation = 4.dp
         ) {
-
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-
-                Text(
-                    text = "${state.teamA} vs ${state.teamB}",
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Text(
-                    text = "${state.totalOvers} Overs"
-                )
-
-                Text(
-                    text = "${state.playersPerTeam} Players Per Team"
-                )
-
-            }
-
-        }
 
             Text(
                 text = "${state.teamA} vs ${state.teamB}",
@@ -237,6 +223,7 @@ fun LiveScoreScreen(
                     "${state.wickets} wicket(s) lost"
             )
 
+
             if (vm.isMatchFinished) {
 
                 Text(
@@ -249,24 +236,15 @@ fun LiveScoreScreen(
                     style = MaterialTheme.typography.displaySmall
                 )
 
-            }
-
-            else if (vm.isInningsFinished && state.innings == 1) {
-
+            } else if (vm.isInningsFinished && state.innings == 1) {
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-
                         vm.startSecondInnings()
-
                     }
                 ) {
-
-                    Text(
-                        "Start Chase (${state.teamB})"
-                    )
-
+                    Text("Start Chase (${state.teamB})")
                 }
 
             }

@@ -135,6 +135,18 @@ fun AppNavigation(
 
                 onScorecard = {
                     navController.navigate(AppDestinations.SCORECARD)
+                },
+
+                onMatchFinished = {
+                    navController.navigate(AppDestinations.MATCH_SUMMARY) {
+
+                        popUpTo(AppDestinations.LIVE_SCORE) {
+
+                            inclusive = true
+
+                        }
+
+                    }
                 }
             )
         }

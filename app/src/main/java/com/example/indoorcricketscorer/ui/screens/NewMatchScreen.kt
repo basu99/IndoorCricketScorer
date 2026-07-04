@@ -20,6 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.example.indoorcricketscorer.ui.components.TeamPlayerSection
 import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
+import com.example.indoorcricketscorer.ui.components.PlayerSuggestionDropdown
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun NewMatchScreen(
@@ -61,6 +63,18 @@ fun NewMatchScreen(
                 playersValue > 0 &&
                 teamAPlayers.size == playersValue &&
                 teamBPlayers.size == playersValue
+
+    val teamASuggestions by playerVm
+        .searchPlayers(teamAPlayerInput)
+        .collectAsState(initial = emptyList())
+
+    val teamBSuggestions by playerVm
+        .searchPlayers(teamBPlayerInput)
+        .collectAsState(initial = emptyList())
+
+    val suggestions by playerVm
+        .suggestions
+        .collectAsState()
 
 
     Surface(
@@ -147,6 +161,8 @@ fun NewMatchScreen(
 
                     teamAPlayerInput = it
 
+                    playerVm.search(it)
+
                 },
 
                 onAdd = {
@@ -180,6 +196,17 @@ fun NewMatchScreen(
                 }
 
             )
+            PlayerSuggestionDropdown(
+
+                players = teamASuggestions,
+
+                onPlayerSelected = { player ->
+
+                    teamAPlayerInput = player.name
+
+                }
+
+            )
 
             TeamPlayerSection(
 
@@ -194,6 +221,8 @@ fun NewMatchScreen(
                 onInputChange = {
 
                     teamBPlayerInput = it
+
+                    playerVm.search(it)
 
                 },
 
@@ -228,7 +257,17 @@ fun NewMatchScreen(
                 }
 
             )
+            PlayerSuggestionDropdown(
 
+                players = teamBSuggestions,
+
+                onPlayerSelected = { player ->
+
+                    teamBPlayerInput = player.name
+
+                }
+
+            )
 
             Button(
 
