@@ -29,7 +29,12 @@ fun ScoringKeypad(
 
     onSix: () -> Unit,
 
-    onWicket: () -> Unit
+    onWicket: () -> Unit,
+
+    onWide: () -> Unit,
+
+    onNoBall: () -> Unit,
+
 
 ) {
 
@@ -79,6 +84,22 @@ fun ScoringKeypad(
 
             androidx.compose.foundation.layout.Box(Modifier.weight(1f)) {
                 ScoreButton("W", enabled, onWicket)
+            }
+
+            androidx.compose.foundation.layout.Box(Modifier.weight(1f)) {
+                ScoreButton(
+                    text = "WD",
+                    enabled = enabled,
+                    onClick = onWide
+                )
+            }
+
+            androidx.compose.foundation.layout.Box(Modifier.weight(1f)) {
+                ScoreButton(
+                    text = "NB",
+                    enabled = enabled,
+                    onClick = onNoBall
+                )
             }
 
         }

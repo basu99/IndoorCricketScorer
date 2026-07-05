@@ -16,6 +16,8 @@ data class MatchState(
 
     val firstInningsScore: Int = 0,
 
+    val firstInningsWickets: Int = 0,
+
     val recentBalls: List<String> = emptyList(),
 
     // Team Scores

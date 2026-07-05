@@ -26,15 +26,30 @@ fun ScorecardScreen(
         item {
 
             Text(
-                "${state.teamA} vs ${state.teamB}",
+                text = "${state.teamA} vs ${state.teamB}",
                 style = MaterialTheme.typography.headlineMedium
             )
 
             Text(
-                "${state.runs}/${state.wickets}"
+                text = "${state.totalOvers} Overs • ${state.playersPerTeam} Players",
+                style = MaterialTheme.typography.bodyMedium
             )
 
-            Divider()
+            Spacer(
+                modifier = Modifier.height(6.dp)
+            )
+
+            Text(
+                text = "${state.runs}/${state.wickets}",
+                style = MaterialTheme.typography.displaySmall
+            )
+
+            HorizontalDivider()
+
+            Text(
+                text = "Batting",
+                style = MaterialTheme.typography.titleLarge
+            )
 
             Text(
                 "Batting",
@@ -46,14 +61,26 @@ fun ScorecardScreen(
         items(vm.battingTeamPlayers) { batter ->
 
             Text(
-                "${batter.name}"
+                text = batter.name,
+                style = MaterialTheme.typography.titleMedium
             )
 
             Text(
-                "${batter.runs} (${batter.balls})   4s:${batter.fours}   5s:${batter.fives}   6s:${batter.sixes}   SR ${"%.1f".format(batter.strikeRate)}"
+                text = "${batter.runs} (${batter.balls})",
+                style = MaterialTheme.typography.bodyLarge
             )
 
-            Divider()
+            Text(
+                text = "4s ${batter.fours} • 5s ${batter.fives} • 6s ${batter.sixes}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Text(
+                text = "Strike Rate ${"%.1f".format(batter.strikeRate)}",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            HorizontalDivider()
 
         }
 
@@ -71,14 +98,26 @@ fun ScorecardScreen(
         items(vm.bowlingTeamPlayers) { bowler ->
 
             Text(
-                bowler.name
+                text = bowler.name,
+                style = MaterialTheme.typography.titleMedium
             )
 
             Text(
-                "${bowler.wickets}/${bowler.runsConceded}   Overs ${bowler.ballsBowled / 6}.${bowler.ballsBowled % 6}   Econ ${"%.2f".format(bowler.economy)}"
+                text = "${bowler.wickets}/${bowler.runsConceded}",
+                style = MaterialTheme.typography.bodyLarge
             )
 
-            Divider()
+            Text(
+                text = "Overs ${bowler.ballsBowled / 6}.${bowler.ballsBowled % 6}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Text(
+                text = "Economy ${"%.2f".format(bowler.economy)}",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            HorizontalDivider()
 
         }
 

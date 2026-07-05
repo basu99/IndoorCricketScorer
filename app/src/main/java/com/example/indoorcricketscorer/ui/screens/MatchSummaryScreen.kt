@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.indoorcricketscorer.viewmodel.ScoreViewModel
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun MatchSummaryScreen(
@@ -43,8 +45,34 @@ fun MatchSummaryScreen(
             ) {
 
                 Text(
-                    vm.resultText,
+                    text = "🏆 ${vm.winner}",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+
+                Text(
+                    text = vm.resultText,
                     style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(
+                    Modifier.height(12.dp)
+                )
+
+                Text(
+                    "Final Score",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    "${vm.state.teamA}: ${vm.state.firstInningsScore}/${vm.state.firstInningsWickets}"
+                )
+
+                Text(
+                    "${vm.state.teamB}: ${vm.state.runs}/${vm.state.wickets}"
                 )
 
             }

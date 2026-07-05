@@ -74,10 +74,14 @@ fun AppNavigation(
         composable(AppDestinations.HOME) {
             HomeScreen(
                 onNewMatchClick = {
-                    navController.navigate(AppDestinations.NEW_MATCH)
+                    navController.navigate(AppDestinations.NEW_MATCH) {
+                        launchSingleTop = true
+                    }
                 },
                 onStartMatch = {
-                    // Will be implemented later
+                    navController.navigate(AppDestinations.BATTING_ORDER) {
+                        launchSingleTop = true
+                    }
                 },
                 onMatchHistoryClick = {
                     navController.navigate(AppDestinations.MATCH_HISTORY)
@@ -129,15 +133,39 @@ fun AppNavigation(
                 vm = scoreViewModel,
 
                 onHome = {
-                    navController.navigate(AppDestinations.HOME)
+
+                    navController.navigate(AppDestinations.HOME) {
+
+                        popUpTo(AppDestinations.HOME) {
+
+                            inclusive = false
+
+                        }
+
+                        launchSingleTop = true
+
+                    }
+
                 },
 
                 onNewMatch = {
-                    navController.navigate(AppDestinations.NEW_MATCH)
+
+                    scoreViewModel.resetMatch()
+
+                    navController.navigate(AppDestinations.NEW_MATCH) {
+
+                        popUpTo(AppDestinations.HOME)
+
+                        launchSingleTop = true
+
+                    }
+
                 },
 
                 onScorecard = {
-                    navController.navigate(AppDestinations.SCORECARD)
+                    navController.navigate(AppDestinations.SCORECARD) {
+                        launchSingleTop = true
+                    }
                 },
 
                 onMatchFinished = {
@@ -200,19 +228,39 @@ fun AppNavigation(
 
                 onHome = {
 
-                    navController.navigate(AppDestinations.HOME)
+                    scoreViewModel.resetMatch()
+
+                    navController.navigate(AppDestinations.HOME) {
+
+                        popUpTo(AppDestinations.HOME)
+
+                        launchSingleTop = true
+
+                    }
 
                 },
 
                 onNewMatch = {
 
-                    navController.navigate(AppDestinations.NEW_MATCH)
+                    scoreViewModel.resetMatch()
+
+                    navController.navigate(AppDestinations.NEW_MATCH) {
+
+                        popUpTo(AppDestinations.HOME)
+
+                        launchSingleTop = true
+
+                    }
 
                 },
 
                 onScorecard = {
 
-                    navController.navigate(AppDestinations.SCORECARD)
+                    navController.navigate(AppDestinations.SCORECARD) {
+
+                        launchSingleTop = true
+
+                    }
 
                 }
 
@@ -228,7 +276,11 @@ fun AppNavigation(
 
                 onContinue = {
 
-                    navController.navigate(AppDestinations.LIVE_SCORE)
+                    navController.navigate(AppDestinations.LIVE_SCORE) {
+
+                        launchSingleTop = true
+
+                    }
 
                 }
 

@@ -13,8 +13,17 @@ interface PlayerDao {
     @Query("SELECT * FROM players ORDER BY name ASC")
     fun getAllPlayers(): Flow<List<PlayerEntity>>
 
-    @Query("SELECT * FROM players WHERE name LIKE :query || '%' ORDER BY name ASC")
-    fun searchPlayers(query: String): Flow<List<PlayerEntity>>
+    @Query(
+        """
+    SELECT *
+    FROM players
+    WHERE LOWER(name) LIKE LOWER(:query) || '%'
+    ORDER BY name ASC
+    """
+    )
+    fun searchPlayers(
+        query: String
+    ): Flow<List<PlayerEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlayer(player: PlayerEntity)

@@ -36,11 +36,17 @@ fun BatterCard(
             striker?.let {
 
                 Text(
-                    "${it.name} *"
+                    "🏏 ${it.name}",
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
                     "${it.runs} (${it.balls})"
+                )
+
+                Text(
+                    "SR %.1f".format(it.strikeRate),
+                    style = MaterialTheme.typography.bodySmall
                 )
 
             }
@@ -50,11 +56,17 @@ fun BatterCard(
             nonStriker?.let {
 
                 Text(
-                    it.name
+                    it.name,
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
                     "${it.runs} (${it.balls})"
+                )
+
+                Text(
+                    "SR %.1f".format(it.strikeRate),
+                    style = MaterialTheme.typography.bodySmall
                 )
 
             }

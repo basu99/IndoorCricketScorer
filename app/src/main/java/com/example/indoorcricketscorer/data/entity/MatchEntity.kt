@@ -4,7 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "matches")
+@Entity(
+    tableName = "matches",
+    indices = [
+        androidx.room.Index("date")
+    ]
+)
 data class MatchEntity(
 
     @PrimaryKey(autoGenerate = true)

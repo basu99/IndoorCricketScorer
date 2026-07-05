@@ -16,9 +16,13 @@ class PlayerRepository(
 
     }
 
-    fun searchPlayers(query: String): Flow<List<PlayerEntity>> {
+    fun searchPlayers(
+        query: String
+    ): Flow<List<PlayerEntity>> {
 
-        return playerDao.searchPlayers(query)
+        return playerDao.searchPlayers(
+            query.trim()
+        )
 
     }
 

@@ -33,6 +33,9 @@ fun BattingOrderScreen(
         mutableStateOf<Int?>(null)
 
     }
+    var openingBowler by remember {
+        mutableStateOf<Int?>(null)
+    }
 
     Column(
 
@@ -111,19 +114,39 @@ fun BattingOrderScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            vm.state.teamA,
-            style = MaterialTheme.typography.titleMedium
+            "Opening Bowler",
+            style = MaterialTheme.typography.headlineSmall
         )
 
-        var openingBowler by remember {
+        Spacer(modifier = Modifier.height(8.dp))
 
-            mutableStateOf<Int?>(null)
+        LazyColumn(
+            modifier = Modifier.heightIn(max = 220.dp)
+        ) {
+
+            items(bowlers.indices.toList()) { index ->
+
+                val bowler = bowlers[index]
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(bowler.name)
+
+                    RadioButton(
+                        selected = openingBowler == index,
+                        onClick = {
+                            openingBowler = index
+                        }
+                    )
+
+                }
+
+            }
 
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        HorizontalDivider()
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -151,7 +174,8 @@ fun BattingOrderScreen(
             enabled =
                 striker != null &&
                         nonStriker != null &&
-                        striker != nonStriker,
+                        striker != nonStriker &&
+                        openingBowler != null,
 
             modifier = Modifier.fillMaxWidth(),
 
@@ -161,6 +185,8 @@ fun BattingOrderScreen(
                     striker!!,
                     nonStriker!!
                 )
+
+                vm.setOpeningBowler(openingBowler!!)
 
                 onContinue()
 

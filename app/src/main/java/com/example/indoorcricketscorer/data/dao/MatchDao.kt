@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MatchDao {
-    @Query("SELECT * FROM matches ORDER BY id ASC")
+    @Query("SELECT * FROM matches ORDER BY date DESC")
     fun getAllMatches(): Flow<List<MatchEntity>>
 
     @Query("SELECT * FROM matches WHERE id = :id")

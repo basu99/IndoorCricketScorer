@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,12 @@ import androidx.compose.foundation.verticalScroll
 import com.example.indoorcricketscorer.ui.components.TeamPlayerSection
 import com.example.indoorcricketscorer.viewmodel.PlayerViewModel
 import com.example.indoorcricketscorer.ui.components.PlayerSuggestionDropdown
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -72,10 +76,6 @@ fun NewMatchScreen(
     val teamBSuggestions by playerVm
         .searchPlayers(teamBPlayerInput)
         .collectAsState(initial = emptyList())
-
-    val suggestions by playerVm
-        .suggestions
-        .collectAsState()
 
 
     Surface(
@@ -162,7 +162,6 @@ fun NewMatchScreen(
 
                     teamAPlayerInput = it
 
-                    playerVm.search(it)
 
                 },
 
@@ -223,7 +222,6 @@ fun NewMatchScreen(
 
                     teamBPlayerInput = it
 
-                    playerVm.search(it)
 
                 },
 

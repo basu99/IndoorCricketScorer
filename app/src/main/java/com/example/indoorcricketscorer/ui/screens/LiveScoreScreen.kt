@@ -66,28 +66,7 @@ fun LiveScoreScreen(
 
     }
     val battingPlayers = vm.battingTeamPlayers
-    val currentRunRate =
-        if (state.balls == 0)
-            0.0
-        else
-            (state.runs.toDouble() * 6) / state.balls
 
-    val completedOvers = "${state.balls / 6}.${state.balls % 6}"
-
-    val requiredRuns =
-        if (state.innings == 2)
-            (state.target - state.runs).coerceAtLeast(0)
-        else
-            0
-
-    val ballsRemaining =
-        (state.totalOvers * 6) - state.balls
-
-    val requiredRunRate =
-        if (ballsRemaining > 0)
-            requiredRuns.toDouble() * 6 / ballsRemaining
-        else
-            0.0
 
 
     Surface(
@@ -147,11 +126,11 @@ fun LiveScoreScreen(
             }
 
             Text(
-                text = "Overs : $completedOvers / ${state.totalOvers}"
+                text = "Overs : ${vm.completedOvers} / ${state.totalOvers}"
             )
 
             Text(
-                text = "Current Run Rate : %.2f".format(currentRunRate)
+                text = "Current Run Rate : %.2f".format(vm.currentRunRate)
             )
 
             if (state.innings == 2) {
@@ -161,11 +140,11 @@ fun LiveScoreScreen(
                 )
 
                 Text(
-                    text = "Need $requiredRuns from $ballsRemaining balls"
+                    text = "Need ${vm.requiredRuns} from ${vm.ballsRemaining} balls"
                 )
 
                 Text(
-                    text = "Required RR : %.2f".format(requiredRunRate)
+                    text = "Required RR : %.2f".format(vm.requiredRunRate)
                 )
 
             }
@@ -200,16 +179,10 @@ fun LiveScoreScreen(
 
             vm.currentBowler?.let {
 
-                val economy =
-                    if (it.ballsBowled == 0)
-                        0.0
-                    else
-                        (it.runsConceded.toDouble() * 6) / it.ballsBowled
-
                 Text(
                     text =
                         "${it.name}  ${it.wickets}-${it.runsConceded} (${it.ballsBowled / 6}.${it.ballsBowled % 6})  Econ %.2f"
-                            .format(economy)
+                            .format(it.economy)
                 )
 
             }
@@ -227,12 +200,8 @@ fun LiveScoreScreen(
 
             if (state.innings == 2 && !vm.isMatchFinished) {
 
-                val runsNeeded = state.target - state.runs
-
-                val ballsLeft = (state.totalOvers * 6) - state.balls
-
                 Text(
-                    text = "Need $runsNeeded runs from $ballsLeft balls"
+                    text = "Need ${vm.requiredRuns} runs from ${vm.ballsRemaining} balls"
                 )
 
             }
@@ -302,6 +271,29 @@ fun LiveScoreScreen(
 
             }
 
+            if (vm.waitingForNextBowler) {
+
+                Text(
+                    text = "Select Next Bowler",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                vm.bowlingTeamPlayers.forEachIndexed { index, player ->
+
+                    Button(
+                        enabled = index != vm.previousBowlerIndex,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            vm.selectNextBowler(index)
+                        }
+                    ) {
+                        Text(player.name)
+                    }
+
+                }
+
+            }
+
             MatchActionBar(
 
                 onUndo = {
@@ -332,7 +324,8 @@ fun LiveScoreScreen(
                 enabled =
                     !vm.isMatchFinished &&
                             !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
+                            !vm.waitingForNextBatter &&
+                            !vm.waitingForNextBowler,
 
                 onDot = {
 
@@ -380,7 +373,17 @@ fun LiveScoreScreen(
 
                     vm.wicket()
 
-                }
+                },
+
+                onWide = {
+
+                    vm.wide()
+
+                },
+
+                onNoBall = {
+                    vm.noBall()
+                },
 
             )
 
@@ -388,7 +391,8 @@ fun LiveScoreScreen(
                 enabled =
                     !vm.isMatchFinished &&
                             !vm.isInningsFinished &&
-                            !vm.waitingForNextBatter,
+                            !vm.waitingForNextBatter &&
+                            !vm.waitingForNextBowler,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { vm.wicket() }
             ) {

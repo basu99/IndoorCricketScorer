@@ -59,7 +59,7 @@ class ScoreViewModel(
 
                 teamAScore = state.firstInningsScore,
 
-                teamAWickets = 0,
+                teamAWickets = state.firstInningsWickets,
 
                 teamBScore = state.runs,
 
@@ -76,8 +76,6 @@ class ScoreViewModel(
 
 
     }
-
-
 
 
     val resultText: String
@@ -112,6 +110,12 @@ class ScoreViewModel(
     var selectedMatch by mutableStateOf<MatchEntity?>(null)
         private set
 
+    var waitingForNextBowler by mutableStateOf(false)
+        private set
+
+    var previousBowlerIndex by mutableStateOf(-1)
+        private set
+
     private val history = mutableListOf<MatchState>()
 
     val battingTeamPlayers: List<Player>
@@ -144,6 +148,34 @@ class ScoreViewModel(
     val currentBowler: Player?
         get() =
             bowlingTeamPlayers.getOrNull(state.bowlerIndex)
+
+    val completedOvers: String
+        get() = "${state.balls / 6}.${state.balls % 6}"
+
+    val currentRunRate: Double
+        get() =
+            if (state.balls == 0)
+                0.0
+            else
+                (state.runs.toDouble() * 6) / state.balls
+
+    val requiredRuns: Int
+        get() =
+            if (state.innings == 2)
+                (state.target - state.runs).coerceAtLeast(0)
+            else
+                0
+
+    val ballsRemaining: Int
+        get() =
+            (state.totalOvers * 6) - state.balls
+
+    val requiredRunRate: Double
+        get() =
+            if (ballsRemaining > 0)
+                requiredRuns.toDouble() * 6 / ballsRemaining
+            else
+                0.0
 
     val winningMargin: String
 
@@ -353,6 +385,82 @@ class ScoreViewModel(
 
     }
 
+    fun wide() {
+
+        history.add(state)
+
+        val bowlers = bowlingTeamPlayers.toMutableList()
+
+        val bowler = bowlers[state.bowlerIndex]
+
+        bowlers[state.bowlerIndex] = bowler.copy(
+            runsConceded = bowler.runsConceded + 1
+        )
+
+        updateBowlingPlayers(bowlers)
+
+        state = state.copy(
+
+            runs = state.runs + 1,
+
+            recentBalls = (state.recentBalls + "Wd")
+                .takeLast(12)
+
+        )
+
+        if (
+            state.innings == 2 &&
+            state.runs >= state.target
+        ) {
+
+            state = state.copy(
+                balls = state.totalOvers * 6
+            )
+
+            saveMatchIfFinished()
+
+        }
+
+    }
+
+    fun noBall() {
+
+        history.add(state)
+
+        val bowlers = bowlingTeamPlayers.toMutableList()
+
+        val bowler = bowlers[state.bowlerIndex]
+
+        bowlers[state.bowlerIndex] = bowler.copy(
+            runsConceded = bowler.runsConceded + 1
+        )
+
+        updateBowlingPlayers(bowlers)
+
+        state = state.copy(
+
+            runs = state.runs + 1,
+
+            recentBalls = (state.recentBalls + "NB")
+                .takeLast(12)
+
+        )
+
+        if (
+            state.innings == 2 &&
+            state.runs >= state.target
+        ) {
+
+            state = state.copy(
+                balls = state.totalOvers * 6
+            )
+
+            saveMatchIfFinished()
+
+        }
+
+    }
+
     fun wicket() {
 
         history.add(state)
@@ -443,7 +551,13 @@ class ScoreViewModel(
     fun undo() {
 
         if (history.isNotEmpty()) {
+
             state = history.removeAt(history.lastIndex)
+
+            waitingForNextBatter = false
+
+            dismissedBatterIndex = -1
+
         }
     }
 
@@ -461,6 +575,14 @@ class ScoreViewModel(
 
             nonStrikerIndex = nonStrikerIndex
 
+        )
+
+    }
+
+    fun setOpeningBowler(index: Int) {
+
+        state = state.copy(
+            bowlerIndex = index
         )
 
     }
@@ -492,6 +614,8 @@ class ScoreViewModel(
             innings = 2,
 
             firstInningsScore = state.runs,
+
+            firstInningsWickets = state.wickets,
 
             target = state.runs + 1,
 
@@ -584,6 +708,18 @@ class ScoreViewModel(
 
     }
 
+    fun selectNextBowler(index: Int) {
+
+        if (index == previousBowlerIndex) return
+
+        state = state.copy(
+            bowlerIndex = index
+        )
+
+        waitingForNextBowler = false
+
+    }
+
     fun deleteMatch(
 
         id: Long
@@ -638,22 +774,13 @@ class ScoreViewModel(
 
         swapStrike()
 
-        val nextBowler =
+        previousBowlerIndex = state.bowlerIndex
 
-            if (state.bowlerIndex + 1 >= bowlingTeamPlayers.size)
-                0
-            else
-                state.bowlerIndex + 1
+        waitingForNextBowler = true
 
         state = state.copy(
-
-            currentOverBalls = 0,
-
-            bowlerIndex = nextBowler
-
+            currentOverBalls = 0
         )
-
-
 
     }
 

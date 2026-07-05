@@ -32,10 +32,10 @@ fun MatchHeader(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            Text("$overs Overs")
-
-            Text("$players Players")
-
+            Text(
+                text = "$overs Overs • $players Players",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
 
     }

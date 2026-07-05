@@ -5,21 +5,10 @@ import androidx.room.PrimaryKey
 import androidx.room.Index
 
 @Entity(
-
     tableName = "players",
-
     indices = [
-
-        Index(
-
-            value = ["name"],
-
-            unique = true
-
-        )
-
+        androidx.room.Index(value = ["name"], unique = true)
     ]
-
 )
 data class PlayerEntity(
 

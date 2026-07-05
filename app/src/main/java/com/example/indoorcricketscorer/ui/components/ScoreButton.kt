@@ -20,7 +20,6 @@ fun ScoreButton(
 ) {
 
     Button(
-
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
@@ -32,11 +31,8 @@ fun ScoreButton(
     ) {
 
         Text(
-
-            text,
-
-            style = MaterialTheme.typography.titleLarge
-
+            text = text,
+            style = MaterialTheme.typography.headlineSmall
         )
 
     }

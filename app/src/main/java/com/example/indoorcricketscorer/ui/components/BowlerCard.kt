@@ -33,10 +33,31 @@ fun BowlerCard(
 
             bowler?.let {
 
-                Text(it.name)
+                Text(
+                    text = it.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
 
                 Text(
                     "${it.wickets}/${it.runsConceded}"
+                )
+
+                Text(
+                    "${it.ballsBowled / 6}.${it.ballsBowled % 6} overs"
+                )
+
+                Text(
+                    "Economy %.2f".format(it.economy)
+                )
+
+                Text(
+                    "${it.ballsBowled / 6}.${it.ballsBowled % 6} overs",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                Text(
+                    "Econ %.2f".format(it.economy),
+                    style = MaterialTheme.typography.bodySmall
                 )
 
             }

@@ -21,7 +21,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.material3.AlertDialog
 @Composable
 fun MatchHistoryScreen(
 
@@ -33,11 +35,19 @@ fun MatchHistoryScreen(
 
     val matches by vm.matchHistory.collectAsState(initial = emptyList())
 
+    var showDeleteAllDialog by remember {
+
+        mutableStateOf(false)
+
+    }
+
     Button(
+
+        enabled = matches.isNotEmpty(),
 
         onClick = {
 
-            vm.deleteAllMatches()
+            showDeleteAllDialog = true
 
         },
 
@@ -65,7 +75,9 @@ fun MatchHistoryScreen(
 
             Text(
 
-                "No matches played yet."
+                text = "🏏\n\nNo matches have been played yet.\nStart a new match to build your history.",
+
+                style = MaterialTheme.typography.bodyLarge
 
             )
 
@@ -129,11 +141,33 @@ fun MatchHistoryScreen(
                         Spacer(Modifier.height(8.dp))
 
                         Text(
-                            "${match.teamAScore}/${match.teamAWickets} vs ${match.teamBScore}/${match.teamBWickets}"
+                            "${match.teamA}  ${match.teamAScore}/${match.teamAWickets}"
                         )
 
                         Text(
-                            "Winner: ${match.winner}"
+                            "${match.teamB}  ${match.teamBScore}/${match.teamBWickets}"
+                        )
+
+                        Spacer(
+                            Modifier.height(4.dp)
+                        )
+
+                        Text(
+                            "${match.overs} Overs"
+                        )
+
+                        Spacer(
+
+                            Modifier.height(4.dp)
+
+                        )
+
+                        Text(
+
+                            text = "🏆 ${match.winner}",
+
+                            style = MaterialTheme.typography.bodyMedium
+
                         )
 
                     }
@@ -143,6 +177,69 @@ fun MatchHistoryScreen(
             }
 
         }
+
+    }
+    if (showDeleteAllDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+                showDeleteAllDialog = false
+
+            },
+
+            title = {
+
+                Text("Delete Match History")
+
+            },
+
+            text = {
+
+                Text("This will permanently delete every saved match. Continue?")
+
+            },
+
+            confirmButton = {
+
+                Button(
+
+                    onClick = {
+
+                        vm.deleteAllMatches()
+
+                        showDeleteAllDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Delete")
+
+                }
+
+            },
+
+            dismissButton = {
+
+                Button(
+
+                    onClick = {
+
+                        showDeleteAllDialog = false
+
+                    }
+
+                ) {
+
+                    Text("Cancel")
+
+                }
+
+            }
+
+        )
 
     }
 
